@@ -37,6 +37,10 @@ func (fas *FakeAppState) GetAccount(addr crypto.Address) (acm.Account, error) {
 	return account, nil
 }
 
+func (fas *FakeAppState) GetBlockHash(int64) (Word256, error) {
+	panic("Unimplemented!")
+}
+
 func (fas *FakeAppState) UpdateAccount(account acm.Account) error {
 	fas.accounts[account.Address()] = account
 	return nil

@@ -27,6 +27,10 @@ func (ms *MemoryState) GetAccount(address crypto.Address) (acm.Account, error) {
 	return ms.Accounts[address], nil
 }
 
+func (ms *MemoryState) GetBlockHash(int64) (binary.Word256, error) {
+	panic("Unimplemented!")
+}
+
 func (ms *MemoryState) UpdateAccount(updatedAccount acm.Account) error {
 	if updatedAccount == nil {
 		return fmt.Errorf("UpdateAccount passed nil account in MemoryState")

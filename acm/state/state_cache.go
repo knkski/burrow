@@ -73,6 +73,16 @@ func (cache *Cache) GetAccount(address crypto.Address) (acm.Account, error) {
 	return accInfo.account, nil
 }
 
+func (cache *Cache) GetBlockHash(num int64) (binary.Word256, error) {
+	cache.RLock()
+	defer cache.RUnlock()
+	hash, err := cache.backend.GetBlockHash(num)
+	if err != nil {
+		return binary.Zero256, err
+	}
+	return hash, nil
+}
+
 func (cache *Cache) UpdateAccount(account acm.Account) error {
 	accInfo, err := cache.get(account.Address())
 	if err != nil {

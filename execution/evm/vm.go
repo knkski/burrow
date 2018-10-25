@@ -691,7 +691,33 @@ func (vm *VM) call(callState *state.Cache, caller acm.Account, callee *acm.Mutab
 			vm.Debugf(" => [%v, %v, %v] %X\n", memOff, outputOff, length, data)
 
 		case BLOCKHASH: // 0x40
-			stack.Push(Zero256)
+			blockNumber, popErr := stack.Pop64()
+			if popErr != nil {
+				return nil, firstErr(err, popErr)
+			}
+			if blockNumber > int64(vm.params.BlockHeight) {
+				vm.Debugf(" => attempted to get blockhash of a non-existent block")
+				return nil, errors.ErrorCodeGeneric
+			}
+			if int64(vm.params.BlockHeight) - blockNumber > 256 {
+				vm.Debugf(" => attempted to get blockhash of a block outside of allowed range")
+				return nil, errors.ErrorCodeGeneric
+			}
+			if (blockNumber == int64(vm.params.BlockHeight)) {
+				if vm.params.BlockHash.Compare(Zero256) != 0 {
+					vm.Debugf(" => attempted to get blockhash of invalid block")
+					return nil, errors.ErrorCodeGeneric
+				}
+				stack.Push(vm.params.BlockHash)
+				vm.Debugf(" => 0x%X\n", vm.params.BlockHash)
+			} else {
+				hash, err := callState.GetBlockHash(blockNumber)
+				if err != nil {
+					return nil, firstErr(err, errors.ErrorCodeGeneric)
+				}
+				stack.Push(hash)
+				vm.Debugf(" => 0x%X\n", hash)
+			}
 			vm.Debugf(" => 0x%X (NOT SUPPORTED)\n", stack.Peek().Bytes())
 
 		case COINBASE: // 0x41

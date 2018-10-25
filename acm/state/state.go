@@ -12,6 +12,11 @@ type AccountGetter interface {
 	GetAccount(address crypto.Address) (acm.Account, error)
 }
 
+type BlockHashGetter interface {
+	// Get hash for block
+	GetBlockHash(int64) (binary.Word256, error)
+}
+
 type AccountIterable interface {
 	// Iterates through accounts calling passed function once per account, if the consumer
 	// returns true the iteration breaks and returns true to indicate it iteration
@@ -50,6 +55,7 @@ type StorageIterable interface {
 // Read-only account and storage state
 type Reader interface {
 	AccountGetter
+	BlockHashGetter
 	StorageGetter
 }
 
