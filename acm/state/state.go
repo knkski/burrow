@@ -112,5 +112,13 @@ func GlobalAccountPermissions(getter AccountGetter) permission.AccountPermission
 			Roles: []string{},
 		}
 	}
-	return GlobalPermissionsAccount(getter).Permissions()
+
+	global := GlobalPermissionsAccount(getter)
+	if global == nil {
+		return permission.AccountPermissions{
+			Roles: []string{},
+		}
+	}
+
+	return global.Permissions()
 }
